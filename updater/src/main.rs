@@ -30,7 +30,7 @@ fn main() -> Result<()> {
         sources.add_release(&version, &url)?;
     }
     let mut output: HashMap<String, Sources> = HashMap::new();
-    output.insert("x86_64-unknown-linux-gnu".to_string(), sources);
+    output.insert("x86_64-linux".to_string(), sources);
     let json_output =
         serde_json::to_string_pretty(&output).context("Failed to serialize output")?;
     println!("{}", json_output);
