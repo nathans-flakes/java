@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::process::Command;
 
 use color_eyre::{
     eyre::{bail, Context, ContextCompat, Result},
@@ -26,7 +27,7 @@ fn main() -> Result<()> {
         versions: HashMap::new(),
     };
     for (_slug, (version, url)) in slugs {
-        sources.add_release(&version, &url);
+        sources.add_release(&version, &url)?;
     }
     let mut output: HashMap<String, Sources> = HashMap::new();
     output.insert("x86_64-unknown-linux-gnu".to_string(), sources);
@@ -43,14 +44,16 @@ struct Sources {
     versions: HashMap<String, Source>,
 }
 impl Sources {
-    fn add_release(&mut self, release: &Release, url: &str) {
+    fn add_release(&mut self, release: &Release, url: &str) -> Result<()> {
         let version = release.to_java_version();
         let source = Source {
             major_version: release.major.to_string(),
             version,
             url: url.to_string(),
+            sha256: get_sha256(url)?,
         };
         self.versions.insert(release.major.to_string(), source);
+        Ok(())
     }
 }
 #[derive(Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
@@ -58,6 +61,7 @@ struct Source {
     major_version: String,
     version: String,
     url: String,
+    sha256: String,
 }
 
 /// Serde formatting struct
@@ -138,7 +142,7 @@ fn get_versions_page(page: usize) -> Result<Vec<Release>> {
         .query("image_type", "jdk")
         .query("os", "linux")
         .query("page", &page)
-        .query("page_size", "10")
+        .query("page_size", "50")
         .query("project", "jdk");
     let url = request.url().to_string();
     let response = request
@@ -198,7 +202,7 @@ fn get_url(version: &Release) -> Result<String> {
     .query("image_type", "jdk")
     .query("os", "linux")
     .query("page", "0")
-    .query("page_size", "10")
+    .query("page_size", "1")
     .query("project", "jdk");
     let url = request.url().to_string();
     let response = request
@@ -218,4 +222,16 @@ fn get_url(version: &Release) -> Result<String> {
         Some(binary_info) => Ok(binary_info.package.link.clone()),
         None => bail!("Binary was missing!"),
     }
+}
+
+/// Gets the nix sha256 for a url
+fn get_sha256(url: &str) -> Result<String> {
+    let output = Command::new("nix-prefetch-url")
+        .args([url, "--type", "sha256"])
+        .output()
+        .with_section(|| format!("Failed to prefetch url: {}", url).header("Prefetch Failure"))
+        .context("Failed to prefetch")?;
+    let output = String::from_utf8(output.stdout).context("Invalid utf-8 from nix pre fetch")?;
+    // Trim the trailing new line
+    Ok(output.trim().to_string())
 }
