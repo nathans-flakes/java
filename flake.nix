@@ -10,11 +10,7 @@
     utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         sources = builtins.fromJSON (builtins.readFile ./sources.json);
-      in
-      with import nixpkgs { system = system; };
-      {
-        packages.jdks = builtins.mapAttrs
-          (name: value:
+        buildAdoptLike = with import nixpkgs {system = system;}; name: value:
             let
               cpuName = stdenv.hostPlatform.parsed.cpu.name;
               runtimeDependencies = [
@@ -26,12 +22,12 @@
               runtimeLibraryPath = lib.makeLibraryPath runtimeDependencies;
             in
             stdenv.mkDerivation rec {
-              name = "jdk${value.version}";
+              name = "jdk${toString value.major_version}";
               src = builtins.fetchurl {
-                url = value.url;
+                url = value.link;
                 sha256 = value.sha256;
               };
-              version = value.version;
+              version = value.java_version;
               buildInputs = with pkgs; [
                 alsa-lib
                 fontconfig
@@ -83,17 +79,24 @@
                 find "$out" -name libfontmanager.so -exec \
                   patchelf --add-needed libfontconfig.so {} \;
               '';
-            }
+            };
+      in
+      with import nixpkgs { system = system; };
+      {
+        packages.adoptium = (builtins.mapAttrs
+          (name: value:
+            buildAdoptLike name value
           )
-          sources.${system}.versions;
-
-        packages.jdk = self.packages.jdks.18;
-        packages.jdk-lts = self.packages.jdks.17;
-        packages.jdk18 = self.packages.jdks.18;
-        packages.jdk17 = self.packages.jdks.17;
-        packages.jdk16 = self.packages.jdks.16;
-        packages.jdk11 = self.packages.jdks.11;
-
-        defaultPackage = self.packages.jdks.18;
-        });
-        }
+          sources.${system}.adoptium.versions) // {
+            latest = buildAdoptLike "latest" sources.${system}.adoptium.latest;
+            stable = buildAdoptLike "stable" sources.${system}.adoptium.stable;
+            lts = buildAdoptLike "lts" sources.${system}.adoptium.lts;
+          };
+        
+        packages.latest = self.packages.${system}.adoptium.latest;
+        packages.stable = self.packages.${system}.adoptium.stable;
+        packages.lts = self.packages.${system}.adoptium.lts;
+        
+        defaultPackage = self.packages.${system}.stable;
+      });
+}

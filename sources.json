@@ -1,29 +1,63 @@
 {
   "x86_64-linux": {
-    "versions": {
-      "17": {
-        "major_version": "17",
-        "version": "17.0.0+35",
-        "url": "https://github.com/adoptium/temurin17-binaries/releases/download/jdk17u-2021-10-25-08-48-beta/OpenJDK17U-jdk_x64_linux_hotspot_2021-10-25-08-48.tar.gz",
-        "sha256": "0lb5mkh752x6d5yvlkcgdr60pas1qxk00jwlr7rm3566ry852vgf"
+    "adoptium": {
+      "versions": {
+        "jdk18": {
+          "link": "https://github.com/adoptium/temurin18-binaries/releases/download/jdk18-2021-12-17-07-56-beta/OpenJDK18-jdk_x64_linux_hotspot_2021-12-17-07-56.tar.gz",
+          "major_version": 18,
+          "java_version": "18-beta+28-202112170011",
+          "early_access": true,
+          "sha256": "05jb4qdzb7v8arm1ysghrkyj53k2qaxsb2gnzlkgivgpnv91jbll"
+        },
+        "jdk17": {
+          "link": "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz",
+          "major_version": 17,
+          "java_version": "17.0.1+12",
+          "early_access": false,
+          "sha256": "1dj8aky3wv3c6b9r11dsd1rpwz6bnnjc7kzbxqpm5f6bdlkqr8bf"
+        },
+        "jdk11": {
+          "link": "https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.13%2B8/OpenJDK11U-jdk_x64_linux_hotspot_11.0.13_8.tar.gz",
+          "major_version": 11,
+          "java_version": "11.0.13+8",
+          "early_access": false,
+          "sha256": "0c4fa8kbprpgq2h2zv04x85d2jxab8nlyias2dj4x2acpqs0q71v"
+        },
+        "jdk8": {
+          "link": "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_x64_linux_hotspot_8u312b07.tar.gz",
+          "major_version": 8,
+          "java_version": "1.8.0_312-b07",
+          "early_access": false,
+          "sha256": "022aqglsvs1px07ri8z5kn3lpbp3z90dc6jixdz0mdl3744836b9"
+        },
+        "jdk16": {
+          "link": "https://github.com/adoptium/temurin16-binaries/releases/download/jdk-16.0.2%2B7/OpenJDK16U-jdk_x64_linux_hotspot_16.0.2_7.tar.gz",
+          "major_version": 16,
+          "java_version": "16.0.2+7",
+          "early_access": false,
+          "sha256": "0b1wayg38rckzm1fy4pdm1a1bmjvwvw0vpbxzy7a4nd3fis6sg9j"
+        }
       },
-      "18": {
-        "major_version": "18",
-        "version": "18.0.0+28",
-        "url": "https://github.com/adoptium/temurin18-binaries/releases/download/jdk18-2021-12-17-07-56-beta/OpenJDK18-jdk_x64_linux_hotspot_2021-12-17-07-56.tar.gz",
+      "latest": {
+        "link": "https://github.com/adoptium/temurin18-binaries/releases/download/jdk18-2021-12-17-07-56-beta/OpenJDK18-jdk_x64_linux_hotspot_2021-12-17-07-56.tar.gz",
+        "major_version": 18,
+        "java_version": "18-beta+28-202112170011",
+        "early_access": true,
         "sha256": "05jb4qdzb7v8arm1ysghrkyj53k2qaxsb2gnzlkgivgpnv91jbll"
       },
-      "11": {
-        "major_version": "11",
-        "version": "11.0.13+8",
-        "url": "https://github.com/adoptium/temurin11-binaries/releases/download/jdk11u-2021-11-05-11-35-beta/OpenJDK11U-jdk_x64_linux_hotspot_2021-11-05-11-35.tar.gz",
-        "sha256": "09p60182vz31wxnp43ghlp1q928xfql0wnk7g852s1wiwjr26dm0"
+      "stable": {
+        "link": "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz",
+        "major_version": 17,
+        "java_version": "17.0.1+12",
+        "early_access": false,
+        "sha256": "1dj8aky3wv3c6b9r11dsd1rpwz6bnnjc7kzbxqpm5f6bdlkqr8bf"
       },
-      "16": {
-        "major_version": "16",
-        "version": "16.0.1+9",
-        "url": "https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-07-22-01-18-beta/OpenJDK16U-jdk_x64_linux_hotspot_2021-07-22-01-18.tar.gz",
-        "sha256": "0rgyp5jrwqjxz0ajk94vmwvagk88p5a41sm2ynckq3p7sg992ym0"
+      "lts": {
+        "link": "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz",
+        "major_version": 17,
+        "java_version": "17.0.1+12",
+        "early_access": false,
+        "sha256": "1dj8aky3wv3c6b9r11dsd1rpwz6bnnjc7kzbxqpm5f6bdlkqr8bf"
       }
     }
   }
