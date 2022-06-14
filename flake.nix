@@ -93,9 +93,9 @@
             lts = buildAdoptLike "lts" sources.${system}.adoptium.lts;
           };
         
-        packages.latest = self.packages.${system}.adoptium.latest;
-        packages.stable = self.packages.${system}.adoptium.stable;
-        packages.lts = self.packages.${system}.adoptium.lts;
+        packages.adoptium-latest = self.packages.${system}.adoptium.latest;
+        packages.adoptium-stable = self.packages.${system}.adoptium.stable;
+        packages.adoptium-lts = self.packages.${system}.adoptium.lts;
         
         defaultPackage = self.packages.${system}.stable;
       });
