@@ -27,7 +27,6 @@ pub struct Package {
     checksum_link: String,
     download_count: u64,
     pub link: String,
-    metadata_link: String,
     name: String,
     size: u64,
 }
@@ -43,7 +42,6 @@ pub struct Binary {
     os: String,
     pub package: Package,
     project: String,
-    scm_ref: String,
     updated_at: String,
 }
 
@@ -140,12 +138,13 @@ pub async fn get_available_releases(client: &Client) -> Result<AvailableReleases
 /// Release query struct
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ReleaseQuery {
-    architecture: String,
-    heap_size: String,
-    image_type: String,
-    os: String,
-    page_size: u64,
-    project: String,
+    pub architecture: String,
+    pub heap_size: String,
+    pub image_type: String,
+    pub jvm_impl: String,
+    pub os: String,
+    pub page_size: u64,
+    pub project: String,
 }
 
 /// Attempts to get the release info for a particular version
@@ -163,6 +162,7 @@ pub async fn get_release(client: &Client, version: u64, release_type: &str) -> R
             os: "linux".to_string(),
             page_size: PAGE_SIZE,
             project: "jdk".to_string(),
+            jvm_impl: "hotspot".to_string(),
         })
         .map_err(|e| eyre!(e))
         .context("Failed to build request")?

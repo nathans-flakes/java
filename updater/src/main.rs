@@ -9,6 +9,8 @@ use surf::Client;
 
 /// Adoptium API
 pub mod adoptium;
+/// Semeru API
+pub mod semeru;
 
 /// Java release struct
 #[derive(Deserialize, Serialize, Debug, Clone, Default)]
@@ -75,7 +77,7 @@ async fn main() -> Result<()> {
     // Get adoptium releases
     let adoptium_releases = get_adoptium_releases(&client).await?;
     // Spit out to the serialization format
-    let adoptium = Sources {
+    let temurin = Sources {
         versions: adoptium_releases
             .clone()
             .into_iter()
@@ -94,10 +96,30 @@ async fn main() -> Result<()> {
             .expect("Missing release")
             .clone(),
     };
-    let system = System {
-        temurin: adoptium,
-        ..Default::default()
+    // Get semeru releases
+
+    let semeru_releases = get_semeru_releases(&client).await?;
+    // Spit out to the serialization format
+    let semeru = Sources {
+        versions: semeru_releases
+            .clone()
+            .into_iter()
+            .map(|(k, v)| (format!("jdk{}", k), v))
+            .collect(),
+        latest: semeru_releases
+            .get(&available.most_recent_feature_release)
+            .expect("Missing release")
+            .clone(),
+        stable: semeru_releases
+            .get(&available.most_recent_feature_release)
+            .expect("Missing release")
+            .clone(),
+        lts: semeru_releases
+            .get(&lts_version)
+            .expect("Missing release")
+            .clone(),
     };
+    let system = System { temurin, semeru };
     let mut systems = HashMap::new();
     systems.insert("x86_64-linux".to_string(), system);
     let output = serde_json::to_string_pretty(&systems).context("Failed to encode sources")?;
@@ -107,7 +129,21 @@ async fn main() -> Result<()> {
 
 /// Get the releases from adoptium
 pub async fn get_adoptium_releases(client: &Client) -> Result<HashMap<u64, Release>> {
-    let releases: Result<HashMap<u64, Release>> = adoptium::get_releases(&client)
+    let releases: Result<HashMap<u64, Release>> = adoptium::get_releases(client)
+        .await?
+        .into_iter()
+        .map(|(key, val)| match val.try_into() {
+            Ok(val) => Ok((key, val)),
+            Err(err) => Err(err),
+        })
+        .collect();
+
+    releases.context("Failed getting release from adoptium")
+}
+
+/// Get the releases from semeru
+pub async fn get_semeru_releases(client: &Client) -> Result<HashMap<u64, Release>> {
+    let releases: Result<HashMap<u64, Release>> = semeru::get_releases(client)
         .await?
         .into_iter()
         .map(|(key, val)| match val.try_into() {
