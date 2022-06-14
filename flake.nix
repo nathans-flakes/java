@@ -83,19 +83,19 @@
       in
       with import nixpkgs { system = system; };
       {
-        packages.adoptium = (builtins.mapAttrs
+        packages.temurin = (builtins.mapAttrs
           (name: value:
             buildAdoptLike name value
           )
-          sources.${system}.adoptium.versions) // {
-            latest = buildAdoptLike "latest" sources.${system}.adoptium.latest;
-            stable = buildAdoptLike "stable" sources.${system}.adoptium.stable;
-            lts = buildAdoptLike "lts" sources.${system}.adoptium.lts;
+          sources.${system}.temurin.versions) // {
+            latest = buildAdoptLike "latest" sources.${system}.temurin.latest;
+            stable = buildAdoptLike "stable" sources.${system}.temurin.stable;
+            lts = buildAdoptLike "lts" sources.${system}.temurin.lts;
           };
         
-        packages.adoptium-latest = self.packages.${system}.adoptium.latest;
-        packages.adoptium-stable = self.packages.${system}.adoptium.stable;
-        packages.adoptium-lts = self.packages.${system}.adoptium.lts;
+        packages.temurin-latest = self.packages.${system}.temurin.latest;
+        packages.temurin-stable = self.packages.${system}.temurin.stable;
+        packages.temurin-lts = self.packages.${system}.temurin.lts;
         
         defaultPackage = self.packages.${system}.stable;
       });

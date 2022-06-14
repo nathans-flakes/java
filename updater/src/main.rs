@@ -11,7 +11,7 @@ use surf::Client;
 pub mod adoptium;
 
 /// Java release struct
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct Release {
     link: String,
     major_version: u64,
@@ -21,7 +21,7 @@ pub struct Release {
 }
 
 /// Sources serialization struct
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct Sources {
     versions: HashMap<String, Release>,
     latest: Release,
@@ -30,9 +30,10 @@ pub struct Sources {
 }
 
 /// System serialization struct
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct System {
-    adoptium: Sources,
+    temurin: Sources,
+    semeru: Sources,
 }
 
 impl TryFrom<adoptium::Release> for Release {
@@ -93,7 +94,10 @@ async fn main() -> Result<()> {
             .expect("Missing release")
             .clone(),
     };
-    let system = System { adoptium };
+    let system = System {
+        temurin: adoptium,
+        ..Default::default()
+    };
     let mut systems = HashMap::new();
     systems.insert("x86_64-linux".to_string(), system);
     let output = serde_json::to_string_pretty(&systems).context("Failed to encode sources")?;
