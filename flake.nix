@@ -39,7 +39,6 @@
               xorg.libXrender
               xorg.libXtst
               zlib
-              util-linux
             ];
             nativeBuildInputs = with pkgs; [
               autoPatchelfHook
@@ -72,7 +71,8 @@
               # breaks building OpenJDK (#114495).
               for bin in $( find "$out" -executable -type f -not -name jspawnhelper ); do
                 if patchelf --print-interpreter "$bin" &> /dev/null; then
-                  wrapProgram "$bin" --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}"
+                  wrapProgram "$bin" --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}" \
+                              --prefix PATH : ${lib.makeBinPath [ pkgs.util-linux ]}
                 fi
               done
             '';
