@@ -1,4 +1,4 @@
-use std::{collections::HashMap, process::Command};
+use std::{collections::BTreeMap, process::Command};
 
 use color_eyre::{
     eyre::{eyre, Context, Result},
@@ -25,7 +25,7 @@ pub struct Release {
 /// Sources serialization struct
 #[derive(Deserialize, Serialize, Debug, Clone, Default)]
 pub struct Sources {
-    versions: HashMap<String, Release>,
+    versions: BTreeMap<String, Release>,
     latest: Release,
     stable: Release,
     lts: Release,
@@ -120,7 +120,7 @@ async fn main() -> Result<()> {
             .clone(),
     };
     let system = System { temurin, semeru };
-    let mut systems = HashMap::new();
+    let mut systems = BTreeMap::new();
     systems.insert("x86_64-linux".to_string(), system);
     let output = serde_json::to_string_pretty(&systems).context("Failed to encode sources")?;
     println!("{}", output);
@@ -128,8 +128,8 @@ async fn main() -> Result<()> {
 }
 
 /// Get the releases from adoptium
-pub async fn get_adoptium_releases(client: &Client) -> Result<HashMap<u64, Release>> {
-    let releases: Result<HashMap<u64, Release>> = adoptium::get_releases(client)
+pub async fn get_adoptium_releases(client: &Client) -> Result<BTreeMap<u64, Release>> {
+    let releases: Result<BTreeMap<u64, Release>> = adoptium::get_releases(client)
         .await?
         .into_iter()
         .map(|(key, val)| match val.try_into() {
@@ -142,8 +142,8 @@ pub async fn get_adoptium_releases(client: &Client) -> Result<HashMap<u64, Relea
 }
 
 /// Get the releases from semeru
-pub async fn get_semeru_releases(client: &Client) -> Result<HashMap<u64, Release>> {
-    let releases: Result<HashMap<u64, Release>> = semeru::get_releases(client)
+pub async fn get_semeru_releases(client: &Client) -> Result<BTreeMap<u64, Release>> {
+    let releases: Result<BTreeMap<u64, Release>> = semeru::get_releases(client)
         .await?
         .into_iter()
         .map(|(key, val)| match val.try_into() {

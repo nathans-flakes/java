@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use color_eyre::{
     eyre::{eyre, Context, Result},
@@ -182,11 +182,11 @@ pub async fn get_release(client: &Client, version: u64, release_type: &str) -> R
 }
 
 /// Attempts to get all the versions
-pub async fn get_releases(client: &Client) -> Result<HashMap<u64, Release>> {
+pub async fn get_releases(client: &Client) -> Result<BTreeMap<u64, Release>> {
     let available = get_available_releases(client)
         .await
         .context("Failed to list adoptium releases")?;
-    let mut output = HashMap::new();
+    let mut output = BTreeMap::new();
     // Get the generally available version of all the available releases
     for version in available.available_releases {
         let release = get_release(client, version, "ga").await.with_context(|| {
