@@ -39,6 +39,7 @@
               xorg.libXrender
               xorg.libXtst
               zlib
+              util-linux
             ];
             nativeBuildInputs = with pkgs; [
               autoPatchelfHook
